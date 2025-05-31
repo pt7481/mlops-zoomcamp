@@ -18,9 +18,9 @@ mlflow.set_experiment("nyc-taxi-experiment")
 models_folder = Path('models')
 models_folder.mkdir(exist_ok=True)
 
-def read_dataframe(year, month):
-    filename = f"../../data/green_tripdata_{year}-{month:02d}.parquet"
-    df = pd.read_parquet(filename)
+def read_dataframe(color, year, month):
+    url=f"https://d37ci6vzurychx.cloudfront.net/trip-data/{color}_tripdata_{year}-{month:02d}.parquet"
+    df = pd.read_parquet(url)
 
     df['duration'] = df.lpep_dropoff_datetime - df.lpep_pickup_datetime
     df.duration = df.duration.apply(lambda td: td.total_seconds() / 60)
@@ -86,12 +86,12 @@ def train_model(X_train, y_train, X_val, y_val, dv):
 
     return run.info.run_id
 
-def run(year, month):
-    df_train = read_dataframe(year, month)
+def run(color, year, month):
+    df_train = read_dataframe(color, year, month)
 
     next_year = year if month < 12 else year + 1
     next_month = month + 1 if month < 12 else 1
-    df_val = read_dataframe(next_year, next_month)
+    df_val = read_dataframe(color, next_year, next_month)
 
     X_train, dv = create_X(df_train)
     X_val, _ = create_X(df_val, dv)
@@ -104,9 +104,10 @@ def run(year, month):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train a model to predict taxi trip duration")
+    parser.add_argument('--color', type=str, required=True, help='Color of the taxi data to use (default: yellow)')
     parser.add_argument('--year', type=int, required=True, help='Year of the data to train on')
     parser.add_argument('--month', type=int, required=True, help='Month of the data to train on')
     args =  parser.parse_args()
 
-    run_id = run(year=args.year, month=args.month)
+    run_id = run(color=args.color, year=args.year, month=args.month)
     print(f"Run ID: {run_id}")
