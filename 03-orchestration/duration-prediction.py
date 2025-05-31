@@ -84,7 +84,7 @@ def train_model(X_train, y_train, X_val, y_val, dv):
 
         mlflow.xgboost.log_model(booster, artifact_path="models_mlflow")
 
-        return run.info.run_id
+    return run.info.run_id
 
 def run(year, month):
     df_train = read_dataframe(year, month)
@@ -100,7 +100,7 @@ def run(year, month):
     y_train = df_train[target].values
     y_val = df_val[target].values
 
-    train_model(X_train, y_train, X_val, y_val, dv)
+    return train_model(X_train, y_train, X_val, y_val, dv)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train a model to predict taxi trip duration")
