@@ -173,7 +173,9 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+models/
 mlruns/
 artifacts/
 output/
 *.db
+02-experiment-tracking/mlflow.db
