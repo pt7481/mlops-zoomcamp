@@ -16,15 +16,17 @@ PREPROCESS_DATA_TRAIN_TASK_ID = 'preprocess_data_train'
 DV_S3_KEY = 'dv_s3_key'
 PROCESSED_DATA_S3_KEY = 'processed_data_s3_key'
 
-def preprocess_data(execution_date, training_data=True, **context):
-    run_date_str = execution_date.strftime("%Y-%m-%d")
+def preprocess_data(training_data, logical_date, **context):
+    run_date_str = logical_date.strftime("%Y-%m-%d")
 
     # Obtain either the training or validation raw trip data from S3
     ti = context['ti']
     s3_client = boto3.client("s3")
     key = ti.xcom_pull(task_ids=DOWNLOAD_TASK_ID, key=TRAINING_DATA_S3_KEY if training_data else VALIDATION_DATA_S3_KEY)
     trip_data_obj = s3_client.get_object(Bucket=S3_BUCKET, Key=key)
-    df = pd.read_parquet(trip_data_obj['Body'])
+    body_bytes = trip_data_obj["Body"].read()    
+    buffer     = io.BytesIO(body_bytes)          
+    df         = pd.read_parquet(buffer)      
 
     ### Preprocess the data
 
