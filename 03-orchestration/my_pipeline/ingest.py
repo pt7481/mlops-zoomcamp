@@ -16,17 +16,26 @@ def s3_object_exists(s3_client, bucket_name, key):
         raise
 
 def download_trip_data(color, year, month, execution_date, **context):
-    url=f"https://d37ci6vzurychx.cloudfront.net/trip-data/{color}_tripdata_{year}-{month:02d}.parquet"
-    df = pd.read_parquet(url)
+    training_data_url=f"https://d37ci6vzurychx.cloudfront.net/trip-data/{color}_tripdata_{year}-{month:02d}.parquet"
+    train_df = pd.read_parquet(training_data_url)
 
-    s3_client = boto3.client("s3")
-    run_date_str = execution_date.strftime("%Y-%m-%d")
-    key = f"{S3_PREFIX}/{run_date_str}/{RAW_FOLDER}/{color}_tripdata_{year}-{month:02d}.parquet"
+    next_year = year if month < 12 else year + 1
+    next_month = month + 1 if month < 12 else 1
+    validation_data_url=f"https://d37ci6vzurychx.cloudfront.net/trip-data/{color}_tripdata_{next_year}-{next_month:02d}.parquet"
+    val_df = pd.read_parquet(validation_data_url)
 
-    if not s3_object_exists(s3_client, S3_BUCKET, key):
-        print(f"Uploading {key} to S3 bucket {S3_BUCKET}")
-        s3_client.put_object(Bucket=S3_BUCKET, Key=key, Body=df.to_parquet(index=False))
-    else:
-        print(f"{key} already exists in S3 bucket {S3_BUCKET}")
+    def save_trip_data_to_s3(s3_key_suffix, df, color, year, month, execution_date, **context):
+        s3_client = boto3.client("s3")
+        run_date_str = execution_date.strftime("%Y-%m-%d")
+        key = f"{S3_PREFIX}/{run_date_str}/{RAW_FOLDER}/{s3_key_suffix}_{color}_tripdata_{year}-{month:02d}.parquet"
 
-    context['ti'].xcom_push(key='trip_data_s3_key', value=key)
+        if not s3_object_exists(s3_client, S3_BUCKET, key):
+            print(f"Uploading {key} to S3 bucket {S3_BUCKET}")
+            s3_client.put_object(Bucket=S3_BUCKET, Key=key, Body=df.to_parquet(index=False))
+        else:
+            print(f"{key} already exists in S3 bucket {S3_BUCKET}")
+
+        context['ti'].xcom_push(key=f'{s3_key_suffix}_s3_key', value=key)
+
+    save_trip_data_to_s3("train", train_df, color, year, month, execution_date, **context)
+    save_trip_data_to_s3("val", val_df, color, next_year, next_month, execution_date, **context)
