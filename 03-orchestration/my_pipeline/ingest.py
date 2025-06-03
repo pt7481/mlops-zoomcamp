@@ -15,7 +15,9 @@ def s3_object_exists(s3_client, bucket_name, key):
             return False
         raise
 
-def download_trip_data(color, year, month, execution_date, **context):
+def download_trip_data(color, year, month, logical_date, **context):
+    year = int(year)
+    month = int(month)
     training_data_url=f"https://d37ci6vzurychx.cloudfront.net/trip-data/{color}_tripdata_{year}-{month:02d}.parquet"
     train_df = pd.read_parquet(training_data_url)
 
@@ -24,9 +26,9 @@ def download_trip_data(color, year, month, execution_date, **context):
     validation_data_url=f"https://d37ci6vzurychx.cloudfront.net/trip-data/{color}_tripdata_{next_year}-{next_month:02d}.parquet"
     val_df = pd.read_parquet(validation_data_url)
 
-    def save_trip_data_to_s3(s3_key_suffix, df, color, year, month, execution_date, **context):
+    def save_trip_data_to_s3(s3_key_suffix, df, color, year, month, logical_date, **context):
         s3_client = boto3.client("s3")
-        run_date_str = execution_date.strftime("%Y-%m-%d")
+        run_date_str = logical_date.strftime("%Y-%m-%d")
         key = f"{S3_PREFIX}/{run_date_str}/{RAW_FOLDER}/{s3_key_suffix}_{color}_tripdata_{year}-{month:02d}.parquet"
 
         if not s3_object_exists(s3_client, S3_BUCKET, key):
@@ -37,5 +39,5 @@ def download_trip_data(color, year, month, execution_date, **context):
 
         context['ti'].xcom_push(key=f'{s3_key_suffix}_s3_key', value=key)
 
-    save_trip_data_to_s3("train", train_df, color, year, month, execution_date, **context)
-    save_trip_data_to_s3("val", val_df, color, next_year, next_month, execution_date, **context)
+    save_trip_data_to_s3("train", train_df, color, year, month, logical_date, **context)
+    save_trip_data_to_s3("val", val_df, color, next_year, next_month, logical_date, **context)
