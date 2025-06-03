@@ -15,9 +15,6 @@ import mlflow
 mlflow.set_tracking_uri("http://localhost:5000")
 mlflow.set_experiment("nyc-taxi-experiment")
 
-models_folder = Path('models')
-models_folder.mkdir(exist_ok=True)
-
 def read_dataframe(color, year, month):
     url=f"https://d37ci6vzurychx.cloudfront.net/trip-data/{color}_tripdata_{year}-{month:02d}.parquet"
     df = pd.read_parquet(url)
