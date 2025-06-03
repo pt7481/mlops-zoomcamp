@@ -11,7 +11,7 @@ PREPROCESS_DATA_TRAIN_TASK_ID = 'preprocess_data_train'
 PREPROCESS_DATA_VAL_TASK_ID = 'preprocess_data_val'
 PROCESSED_DATA_S3_KEY = 'processed_data_s3_key'
 
-MLFLOW_TRACKING_URI = "http://ec2-18-219-104-0.us-east-2.compute.amazonaws.com:5000/"
+MLFLOW_TRACKING_URI = "http://ec2-13-58-148-173.us-east-2.compute.amazonaws.com:5000/"
 MLFLOW_EXPERIMENT_NAME = "nyc-taxi-experiment"
 
 def train_model(**context):

@@ -21,6 +21,12 @@ with DAG(
     default_args=default_args,
     start_date=datetime(2025, 6, 1),
     catchup=False,
+    schedule="@monthly",
+    params={  
+        "color": "green",
+        "year": 2021,
+        "month": 1
+    }
 ) as dag:
 
     # 1) Ingest task: download train+val Parquet into S3, push XCom keys "train_s3_key" and "val_s3_key"
@@ -28,9 +34,9 @@ with DAG(
         task_id="download_trip_data",
         python_callable=download_trip_data,
         op_kwargs={
-            "color": "{{ dag_run.conf['color'] }}",
-            "year": "{{ dag_run.conf['year'] }}",
-            "month": "{{ dag_run.conf['month'] }}",
+            "color": "{{ params.color }}",
+            "year": "{{ params.year }}",
+            "month": "{{ params.month }}",
         }
     )
 
