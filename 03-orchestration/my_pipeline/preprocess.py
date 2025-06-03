@@ -25,7 +25,7 @@ def preprocess_data(execution_date, fit_dv, **context):
 
     ### Preprocess the data
 
-    # Create new duration field, filter trips to durations >= 1 and <= 60 minutes
+    # Create new duration field (target), filter trips to durations >= 1 and <= 60 minutes
     df['duration'] = df.lpep_dropoff_datetime - df.lpep_pickup_datetime
     df.duration = df.duration.apply(lambda td: td.total_seconds() / 60)
     df = df[(df.duration >= 1) & (df.duration <= 60)]
