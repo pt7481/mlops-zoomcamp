@@ -39,13 +39,10 @@ def preprocess_data(training_data, logical_date, **context):
 
     df = df[(df.duration >= 1) & (df.duration <= 60)]
 
-    # Create feature PU_DO by concatenating PULocationID and DOLocationID
-    df['PU_DO'] = df['PULocationID'].astype(str) + '_' + df['DOLocationID'].astype(str)
-
     # Create feature dictionary and vectorize it
-    categorical = ['PU_DO']
-    numerical = ['trip_distance']
-    dicts = df[categorical + numerical].to_dict(orient='records')
+    categorical = ['PULocationID', 'DOLocationID']
+    df[categorical] = df[categorical].astype(str)
+    dicts = df[categorical].to_dict(orient='records')
 
     if training_data:
         dv = DictVectorizer(sparse=True)
@@ -82,7 +79,7 @@ def preprocess_data(training_data, logical_date, **context):
          y=y)
     buffer.seek(0)
     s3_client.put_object(Bucket=S3_BUCKET, Key=processed_key, Body=buffer.getvalue())
-    print(f"Processed data saved to S3 at {processed_key}")
+    print(f"Saved {X.shape[0]} rows of {processed_data_key_prefix} data to {processed_key}")
 
     # Push the DictVectorizer and processed data keys to XCom for downstream tasks
     if training_data:

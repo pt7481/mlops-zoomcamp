@@ -29,7 +29,7 @@ with DAG(
     
     def train_for_execution_date(**context):
         logical_date: pendulum.DateTime = context["logical_date"]
-        cutoff = pendulum.datetime(2023, 3, 1, tz=logical_date.timezone_name)
+        cutoff = pendulum.datetime(2023, 5, 1, tz=logical_date.timezone_name)
         if logical_date < cutoff:
             exec_date = logical_date
         else:
