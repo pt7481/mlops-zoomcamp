@@ -24,14 +24,17 @@ def preprocess_data(training_data, logical_date, **context):
     s3_client = boto3.client("s3")
     key = ti.xcom_pull(task_ids=DOWNLOAD_TASK_ID, key=TRAINING_DATA_S3_KEY if training_data else VALIDATION_DATA_S3_KEY)
     trip_data_obj = s3_client.get_object(Bucket=S3_BUCKET, Key=key)
-    body_bytes = trip_data_obj["Body"].read()    
-    buffer     = io.BytesIO(body_bytes)          
-    df         = pd.read_parquet(buffer)      
+    body_bytes = trip_data_obj["Body"].read()
+    buffer = io.BytesIO(body_bytes)
+    df = pd.read_parquet(buffer)
 
     ### Preprocess the data
 
     # Create new duration field (target), filter trips to durations >= 1 and <= 60 minutes
-    df['duration'] = df.lpep_dropoff_datetime - df.lpep_pickup_datetime
+    if 'tpep_pickup_datetime' in df.columns:
+        df['duration'] = df.tpep_dropoff_datetime - df.tpep_pickup_datetime
+    else:
+        df['duration'] = df.lpep_dropoff_datetime - df.lpep_pickup_datetime
     df.duration = df.duration.apply(lambda td: td.total_seconds() / 60)
 
     df = df[(df.duration >= 1) & (df.duration <= 60)]
