@@ -27,6 +27,8 @@ def download_trip_data(color, year, month, logical_date, ti):
     val_df = pd.read_parquet(validation_data_url)
 
     def save_trip_data_to_s3(s3_key_suffix, df, color, year, month, logical_date, ti):
+        print(f"Saving {df.shape[0]} rows of {s3_key_suffix} data for {color} in {year}-{month:02d} to S3")
+
         s3_client = boto3.client("s3")
         run_date_str = logical_date.strftime("%Y-%m-%d")
         key = f"{S3_PREFIX}/{run_date_str}/{RAW_FOLDER}/{s3_key_suffix}_{color}_tripdata_{year}-{month:02d}.parquet"
