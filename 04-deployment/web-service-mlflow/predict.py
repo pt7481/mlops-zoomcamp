@@ -1,12 +1,11 @@
-import pickle
+import os
 from flask import Flask, request, jsonify
 import mlflow
 
-# Run ID including model to use
-mlflow.set_tracking_uri("http://ec2-18-223-16-40.us-east-2.compute.amazonaws.com:5000")
-RUN_ID = "d95c3b4a3a01489cbbdc299ae879d98c"
-logged_model = f"runs:/{RUN_ID}/model"
-model = mlflow.pyfunc.load_model(logged_model)
+# Run ID including model pipeline to use
+RUN_ID = os.getenv('RUN_ID')
+logged_model_s3 = f's3://thoughtswork-co/mlflow/4/{RUN_ID}/artifacts/model'
+model = mlflow.pyfunc.load_model(logged_model_s3)
 
 def prepare_features(ride):
     features = {}
@@ -29,6 +28,7 @@ def predict_endpoint():
     
     result = {
         'duration': pred,
+        'model_version': RUN_ID,
     }
 
     return jsonify(result)
