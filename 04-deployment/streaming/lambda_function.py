@@ -9,7 +9,7 @@ RUN_ID = os.getenv('RUN_ID')
 logged_model_s3 = f's3://thoughtswork-co/mlflow/4/{RUN_ID}/artifacts/model'
 model = mlflow.pyfunc.load_model(logged_model_s3)
 
-kinesis_client = boto3.client('kinesis')
+kinesis_client = boto3.client('kinesis', region_name=os.getenv('AWS_REGION', 'us-east-2'))
 
 PREDICTIONS_STREAM_NAME = os.getenv('PREDICTIONS_STREAM_NAME', 'ride_predictions')
 
@@ -50,17 +50,25 @@ def lambda_handler(event, context):
             }
 
             if not TEST_RUN:
-                kinesis_client.put_record(
-                    StreamName=PREDICTIONS_STREAM_NAME,
-                    Data=json.dumps(prediction_event),
-                    PartitionKey=str(ride_id)
-                )
+                print("Attempting to put record in Kinesis stream:", PREDICTIONS_STREAM_NAME)
+                try:
+                    print("Prediction event:", prediction_event)
+                    response = kinesis_client.put_record(
+                        StreamName=PREDICTIONS_STREAM_NAME,
+                        Data=json.dumps(prediction_event),
+                        PartitionKey=str(ride_id)
+                    )
+                    print("PutRecord response:", response)
+                    print("Record successfully put in Kinesis stream.")
+                except Exception as e:
+                    print("Error putting record in Kinesis stream:", e)
 
             predictions.append(prediction_event)
   
         except Exception as e:
             print("Skipping malformed record:", e)
 
+    print("Predictions:", predictions)
     return {
         'predictions': predictions
     }
