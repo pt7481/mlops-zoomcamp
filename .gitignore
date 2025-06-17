@@ -179,3 +179,4 @@ artifacts/
 output/
 *.db
 02-experiment-tracking/mlflow.db
+data/
