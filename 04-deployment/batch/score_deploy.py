@@ -1,16 +1,17 @@
-from prefect.deployments import Deployment
-from prefect.client.schemas.schedules import CronSchedule
+from prefect import flow
 from score import ride_duration_prediction
+from datetime import datetime
 
-deployment = Deployment.build_from_flow(
-    flow=ride_duration_prediction,
-    name="ride_duration_prediction",
-    work_queue_name="ml",
-    schedule=CronSchedule(cron="0 3 2 * *"),
-    parameters={
-        "taxi_type": "green",
-        "run_id": "d95c3b4a3a01489cbbdc299ae879d98c"    
-    }
-)
+@flow
+def main():
+    ride_duration_prediction(
+        taxi_type="green",
+        run_id="d95c3b4a3a01489cbbdc299ae879d98c",
+        run_date=datetime(2025, 1, 1)
+    )
 
-deployment.apply()
+if __name__ == "__main__":
+    main.serve(
+        name="ride-duration-prediction",
+        cron="0 3 2 * *"
+    )

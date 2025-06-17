@@ -87,7 +87,10 @@ def get_paths(run_date, taxi_type, run_id):
     prev_month = run_date - relativedelta(months=1)
     year = prev_month.year
     month = prev_month.month
-    input_file = f"s3://thoughtswork-co/mlflow/4/{run_id}/artifacts/input_data/{year}/{month:02d}/{taxi_type}.parquet"
+
+    # https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2025-01.parquet
+    #input_file = f"s3://thoughtswork-co/mlflow/4/{run_id}/artifacts/input_data/{year}/{month:02d}/{taxi_type}.parquet"
+    input_file = f"https://d37ci6vzurychx.cloudfront.net/trip-data/{taxi_type}_tripdata_{year}-{month:02d}.parquet"
     output_file = f"s3://thoughtswork-co/mlflow/4/{run_id}/artifacts/output_data/{year}/{month:02d}/{taxi_type}.parquet"
     return input_file, output_file
 
@@ -104,13 +107,13 @@ def ride_duration_prediction(
 
     apply_model(input_file, run_id, output_file)
 
-    def run():
-        taxi_type = sys.argv[1] if len(sys.argv) > 1 else 'green'
-        year = int(sys.argv[2]) if len(sys.argv) > 2 else datetime.now().year
-        month = int(sys.argv[3]) if len(sys.argv) > 3 else datetime.now().month
-        run_id = sys.argv[4] if len(sys.argv) > 4 else 'd95c3b4a3a01489cbbdc299ae879d98c'
+def run():
+    taxi_type = sys.argv[1] if len(sys.argv) > 1 else 'green'
+    year = int(sys.argv[2]) if len(sys.argv) > 2 else datetime.now().year
+    month = int(sys.argv[3]) if len(sys.argv) > 3 else datetime.now().month
+    run_id = sys.argv[4] if len(sys.argv) > 4 else 'd95c3b4a3a01489cbbdc299ae879d98c'
 
-        ride_duration_prediction(taxi_type, run_id, datetime(year, month, 1))
+    ride_duration_prediction(taxi_type, run_id, datetime(year, month, 1))
 
-    if __name__ == "__main__":
-        run()
+if __name__ == "__main__":
+    run()
