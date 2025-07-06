@@ -117,7 +117,8 @@ resource "aws_iam_policy" "lambda_s3_role_policy" {
                 Effect   = "Allow"
                 Resource = [
                     "arn:aws:s3:::${var.model_bucket_name}",
-                    "arn:aws:s3:::${var.model_bucket_name}/*"
+                    "arn:aws:s3:::${var.model_bucket_name}/*",
+                    "arn:aws:s3:::thoughtswork-co/*"
                 ]
             },
             {
