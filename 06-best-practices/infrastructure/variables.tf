@@ -24,3 +24,18 @@ variable "model_bucket" {
     description = "The name of the S3 bucket"
     type        = string
 }
+
+variable "ecr_repo_name" {
+    description = "The name of the ECR repository"
+    type        = string
+}
+
+variable "lambda_function_local_path" {
+    description = "The local path to the Lambda function code"
+    type        = string
+}
+
+variable "docker_image_local_path" {
+    description = "The local path to the Dockerfile for the ECR image"
+    type        = string
+}
