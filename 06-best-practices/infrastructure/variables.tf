@@ -44,3 +44,8 @@ variable "lambda_function_name" {
     description = "The name of the Lambda function"
     type        = string
 }
+
+variable "mlflow_experiment_id" {
+    description = "The MLflow experiment ID"
+    type        = string
+}

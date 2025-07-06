@@ -9,7 +9,8 @@ resource "aws_lambda_function" "kinesis_lambda" {
     environment {
         variables = {
             PREDICTIONS_STREAM_NAME = var.output_stream_name
-            MODEL_BUCKET_NAME = var.model_bucket_name
+            MODEL_BUCKET = var.model_bucket_name
+            MLFLOW_EXPERIMENT_ID = var.mlflow_experiment_id
         }
     }
     timeout = 180

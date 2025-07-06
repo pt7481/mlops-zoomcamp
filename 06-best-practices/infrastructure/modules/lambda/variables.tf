@@ -30,3 +30,8 @@ variable "source_stream_arn" {
   description = "The ARN of the source Kinesis stream"
   type        = string
 }
+
+variable "mlflow_experiment_id" {
+  description = "The MLflow experiment ID"
+  type        = string
+}

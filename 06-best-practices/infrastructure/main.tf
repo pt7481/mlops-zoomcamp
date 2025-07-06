@@ -68,4 +68,5 @@ module "lambda_function" {
     project_id = var.project_id
     output_stream_arn = module.output_kinesis_stream.stream_arn
     source_stream_arn = module.source_kinesis_stream.stream_arn
+    mlflow_experiment_id = var.mlflow_experiment_id
 }
