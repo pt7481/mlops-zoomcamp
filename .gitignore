@@ -180,3 +180,7 @@ output/
 *.db
 02-experiment-tracking/mlflow.db
 data/
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
