@@ -18,6 +18,7 @@ locals {
     account_id = data.aws_caller_identity.current_identity.account_id
 }
 
+# ride_events
 module "source_kinesis_stream" {
     source = "./modules/kinesis"
     stream_name = "${var.source_stream_name}_${var.project_id}"
@@ -28,4 +29,23 @@ module "source_kinesis_stream" {
         Environment = "dev"
         AccountID = local.account_id
     }
+}
+
+# ride_predictions
+module "output_kinesis_stream" {
+    source = "./modules/kinesis"
+    stream_name = "${var.output_stream_name}_${var.project_id}"
+    shard_count = 2
+    retention_period = 48
+    tags = {
+        CreatedBy = var.project_id
+        Environment = "dev"
+        AccountID = local.account_id
+    }
+}
+
+# model bucket
+module "s3_bucket" {
+    source = "./modules/s3"
+    bucket_name = "tw-${var.model_bucket}-${var.project_id}"
 }

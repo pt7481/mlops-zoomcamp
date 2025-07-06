@@ -14,3 +14,13 @@ variable "source_stream_name" {
     description = "The name of the source Kinesis stream"
     type        = string
 }
+
+variable "output_stream_name" {
+    description = "The name of the output Kinesis stream"
+    type        = string
+}
+
+variable "model_bucket" {
+    description = "The name of the S3 bucket"
+    type        = string
+}
