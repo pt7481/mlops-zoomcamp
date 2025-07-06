@@ -39,3 +39,8 @@ variable "docker_image_local_path" {
     description = "The local path to the Dockerfile for the ECR image"
     type        = string
 }
+
+variable "lambda_function_name" {
+    description = "The name of the Lambda function"
+    type        = string
+}

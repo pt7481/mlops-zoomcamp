@@ -29,6 +29,6 @@ data aws_ecr_image lambda_image {
     image_tag = var.ecr_image_tag
 }
 
-output "image_url" {
+output "image_uri" {
     value = "${aws_ecr_repository.repo.repository_url}:${data.aws_ecr_image.lambda_image.image_tag}"
 }
