@@ -13,7 +13,8 @@ resource "aws_lambda_function" "kinesis_lambda" {
             MLFLOW_EXPERIMENT_ID = var.mlflow_experiment_id
         }
     }
-    timeout = 180
+    memory_size = 512
+    timeout = 300
 }
 
 resource "aws_lambda_function_event_invoke_config" "kinesis_lambda_event" {
