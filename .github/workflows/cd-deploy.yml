@@ -71,7 +71,7 @@ jobs:
           export RUN_ID=$(aws s3api list-objects-v2 --bucket ${MODEL_BUCKET_DEV} \
           --query "sort_by(Contents, &LastModified)[-1].Key" --output text | cut -f3 -d/)
           aws s3 sync s3://${MODEL_BUCKET_DEV}/mlflow s3://${MODEL_BUCKET_PROD}/mlflow
-          echo "::set-output name=run_id::${RUN_ID}"
+          echo "run_id=$RUN_ID" >> $GITHUB_OUTPUT
 
       - name: Update Lambda function
         env:
