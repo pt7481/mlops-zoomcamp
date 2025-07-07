@@ -13,8 +13,6 @@ jobs:
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.7  # or whatever version you use
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -29,4 +27,4 @@ jobs:
 
       - name: Terraform Destroy
         working-directory: '06-best-practices/infrastructure'
-        run: terraform destroy -auto-approve
+        run: terraform destroy -auto-approve -var-file=vars/prod.tfvars
