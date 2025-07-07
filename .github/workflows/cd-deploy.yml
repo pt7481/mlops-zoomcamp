@@ -21,6 +21,8 @@ jobs:
           aws-region: us-east-2
 
       - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
 
       # Define infrastructure
       - name: TF plan
