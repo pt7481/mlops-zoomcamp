@@ -59,10 +59,10 @@ jobs:
           ECR_REPOSITORY: ${{ steps.tf-apply.outputs.ecr_repo }}
           IMAGE_TAG: latest
         run: |
-          echo "ecr_repo: ${{ steps.tf-apply.outputs.ecr_repo }}"
-          echo "lambda_function: ${{ steps.tf-apply.outputs.lambda_function }}"
-          echo "model_bucket: ${{ steps.tf-apply.outputs.model_bucket }}"
-          echo "predictions_stream: ${{ steps.tf-apply.outputs.predictions_stream }}"
+          echo "ecr_repo: ${steps.tf-apply.outputs.ecr_repo }"
+          echo "lambda_function: ${ steps.tf-apply.outputs.lambda_function }"
+          echo "model_bucket: ${ steps.tf-apply.outputs.model_bucket }"
+          echo "predictions_stream: ${ steps.tf-apply.outputs.predictions_stream }"
 
       # docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
       # docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
