@@ -9,6 +9,12 @@ on:
 jobs:
   build-push-deploy:
     runs-on: ubuntu-latest
+    outputs:
+      ecr_repo: ${{ steps.tf-apply.outputs.ecr_repo }}
+      lambda_function: ${{ steps.tf-apply.outputs.lambda_function }}
+      model_bucket: ${{ steps.tf-apply.outputs.model_bucket }}
+      predictions_stream: ${{ steps.tf-apply.outputs.predictions_stream }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -39,12 +45,6 @@ jobs:
           echo "lambda_function=$(terraform output -raw lambda_function | tr -d '\r\n')" >> $GITHUB_OUTPUT
           echo "model_bucket=$(terraform output -raw model_bucket | tr -d '\r\n')" >> $GITHUB_OUTPUT
           echo "predictions_stream=$(terraform output -raw predictions_stream | tr -d '\r\n')" >> $GITHUB_OUTPUT
-        outputs:
-          ecr_repo: ${{ steps.tf-apply.outputs.ecr_repo }}
-          lambda_function: ${{ steps.tf-apply.outputs.lambda_function }}
-          model_bucket: ${{ steps.tf-apply.outputs.model_bucket }}
-          predictions_stream: ${{ steps.tf-apply.outputs.predictions_stream }}
-
 
       # Build-Push
       - name: Login to Amazon ECR 
