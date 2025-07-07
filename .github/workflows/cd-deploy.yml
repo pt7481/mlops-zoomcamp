@@ -75,6 +75,7 @@ jobs:
 
       - name: Update Lambda function
         env:
+          LAMBDA_FUNCTION: ${{ steps.tf-apply.outputs.lambda_function }}
           RUN_ID: ${{ steps.get-model-artifacts.outputs.run_id }}
           MLFLOW_EXPERIMENT_ID: "4"
         run: |
