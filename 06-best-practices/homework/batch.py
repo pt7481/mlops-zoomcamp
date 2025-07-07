@@ -6,7 +6,12 @@ import os
 import pickle
 import pandas as pd
 
-
+S3_ENDPOINT_URL = os.getenv('S3_ENDPOINT_URL')
+options = {
+    'client_kwargs': {
+        'endpoint_url': S3_ENDPOINT_URL
+    }
+}
 
 def prepare_data(df, categorical):
     df['duration'] = df.tpep_dropoff_datetime - df.tpep_pickup_datetime
@@ -16,16 +21,9 @@ def prepare_data(df, categorical):
     return df
 
 def read_data(filename, categorical):
-    S3_ENDPOINT_URL = os.getenv('S3_ENDPOINT_URL')
-
     if not S3_ENDPOINT_URL:
         df = pd.read_parquet(filename)
     else:
-        options = {
-            'client_kwargs': {
-                'endpoint_url': S3_ENDPOINT_URL
-            }
-        }
         df = pd.read_parquet(filename, storage_options=options)  
 
     df = prepare_data(df, categorical)

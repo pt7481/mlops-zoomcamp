@@ -18,3 +18,5 @@ def test_prepare_data():
 
     predicted_durations_df = batch.prepare_data(df, ['PULocationID', 'DOLocationID'])
     assert predicted_durations_df.shape[0] == 2
+    
+    return predicted_durations_df
