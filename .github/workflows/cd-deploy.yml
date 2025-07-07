@@ -56,11 +56,11 @@ jobs:
           PREDICTIONS_STREAM_NAME: ${{ steps.tf-apply.outputs.predictions_stream }}
           IMAGE_TAG: "latest"
         run: |
-            echo "ECR_REGISTRY: ${ECR_REGISTRY}"
-            echo "ECR_REPOSITORY: ${ECR_REPOSITORY}"
-            echo "LAMBDA_FUNCTION: ${LAMBDA_FUNCTION}"
-            echo "MODEL_BUCKET_PROD: ${MODEL_BUCKET_PROD}"
-            echo "PREDICTIONS_STREAM_NAME: ${PREDICTIONS_STREAM_NAME}"
+            echo "Echo ECR_REGISTRY: ${ECR_REGISTRY}"
+            echo "Echo ECR_REPOSITORY: ${ECR_REPOSITORY}"
+            echo "Echo LAMBDA_FUNCTION: ${LAMBDA_FUNCTION}"
+            echo "Echo MODEL_BUCKET_PROD: ${MODEL_BUCKET_PROD}"
+            echo "Echo PREDICTIONS_STREAM_NAME: ${PREDICTIONS_STREAM_NAME}"
         # docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         # docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         # echo "image_uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
