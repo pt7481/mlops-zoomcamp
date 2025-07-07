@@ -72,7 +72,7 @@ module "lambda_function" {
 }
 
 output "lambda_function" {
-    value = module.lambda_function.lambda_function_name
+    value = "${var.lambda_function_name}_${var.project_id}"
 }
 
 output "model_bucket" {
@@ -80,9 +80,9 @@ output "model_bucket" {
 }
 
 output "predictions_stream" {
-    value = module.lambda_function.output_stream_name
+    value = "${var.output_stream_name}_${var.project_id}"
 }
 
 output "ecr_repo" {
-    value = module.ecr_image.ecr_repo_name
+    value = module.ecr_image.name
 }
