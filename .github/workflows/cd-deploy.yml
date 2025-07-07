@@ -35,10 +35,10 @@ jobs:
         if: ${{ steps.tf-plan.outcome == 'success' }}
         run: |
           terraform apply -auto-approve -var-file=vars/prod.tfvars
-          echo "ECR_REGISTRY=$(terraform output -raw ecr_repo | tr -d '\r\n')" >> $GITHUB_ENV
-          echo "LAMBDA_FUNCTION=$(terraform output -raw lambda_function | tr -d '\r\n')" >> $GITHUB_ENV
-          echo "MODEL_BUCKET_PROD=$(terraform output -raw model_bucket | tr -d '\r\n')" >> $GITHUB_ENV
-          echo "PREDICTIONS_STREAM_NAME=$(terraform output -raw predictions_stream | tr -d '\r\n')" >> $GITHUB_ENV
+          echo "ECR_REGISTRY=$(terraform output -raw ecr_repo 2>/dev/null | tr -d '\r\n')" >> $GITHUB_ENV
+          echo "LAMBDA_FUNCTION=$(terraform output -raw lambda_function 2>/dev/null | tr -d '\r\n')" >> $GITHUB_ENV
+          echo "MODEL_BUCKET_PROD=$(terraform output -raw model_bucket 2>/dev/null | tr -d '\r\n')" >> $GITHUB_ENV
+          echo "PREDICTIONS_STREAM_NAME=$(terraform output -raw predictions_stream 2>/dev/null | tr -d '\r\n')" >> $GITHUB_ENV
 
       # Build-Push
       - name: Login to Amazon ECR 
