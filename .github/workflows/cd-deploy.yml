@@ -36,15 +36,15 @@ jobs:
         run: |
           terraform apply -auto-approve -var-file=vars/prod.tfvars
 
-          ECR_REPO=$(terraform output -raw ecr_repo | tr -d '\r\n')
-          LAMBDA_FUNCTION=$(terraform output -raw lambda_function | tr -d '\r\n')
-          MODEL_BUCKET=$(terraform output -raw model_bucket | tr -d '\r\n')
-          PREDICTIONS_STREAM=$(terraform output -raw predictions_stream | tr -d '\r\n')
+          ECR_REPO=$(terraform output -raw ecr_repo)
+          LAMBDA_FUNCTION=$(terraform output -raw lambda_function)
+          MODEL_BUCKET=$(terraform output -raw model_bucket)
+          PREDICTIONS_STREAM=$(terraform output -raw predictions_stream)
 
-          echo "ecr_repo=$ECR_REPO" >> $GITHUB_OUTPUT
-          echo "lambda_function=$LAMBDA_FUNCTION" >> $GITHUB_OUTPUT
-          echo "model_bucket=$MODEL_BUCKET" >> $GITHUB_OUTPUT
-          echo "predictions_stream=$PREDICTIONS_STREAM" >> $GITHUB_OUTPUT
+          echo "::set-output name=ecr_repo::$ECR_REPO"
+          echo "::set-output name=lambda_function::$LAMBDA_FUNCTION"
+          echo "::set-output name=model_bucket::$MODEL_BUCKET"
+          echo "::set-output name=predictions_stream::$PREDICTIONS_STREAM"
 
       # Build-Push
       - name: Login to Amazon ECR 
