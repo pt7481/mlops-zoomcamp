@@ -26,7 +26,7 @@ def read_data(filename, categorical):
                 'endpoint_url': S3_ENDPOINT_URL
             }
         }
-        df = pd.read_parquet('s3://bucket/file.parquet', storage_options=options)  
+        df = pd.read_parquet(filename, storage_options=options)  
 
     df = prepare_data(df, categorical)
     return df
