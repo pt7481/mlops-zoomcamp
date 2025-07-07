@@ -49,7 +49,7 @@ jobs:
 
       - name: Build and push Docker image 
         id: build-image-step
-        working-directory: 06-best-practices/infrastructure
+        working-directory: 06-best-practices
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ steps.tf-apply.outputs.ecr_repo }}
