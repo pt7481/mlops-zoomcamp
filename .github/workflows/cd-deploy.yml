@@ -35,10 +35,10 @@ jobs:
         if: ${{ steps.tf-plan.outcome == 'success' }}
         run: |
           terraform apply -auto-approve -var-file=vars/prod.tfvars
-          echo "ecr_repo=$(terraform output -raw ecr_repo | tr -d '\r\n')" >> $GITHUB_OUTPUT
-          echo "lambda_function=$(terraform output -raw lambda_function | tr -d '\r\n')" >> $GITHUB_OUTPUT
-          echo "model_bucket=$(terraform output -raw model_bucket | tr -d '\r\n')" >> $GITHUB_OUTPUT
-          echo "predictions_stream=$(terraform output -raw predictions_stream | tr -d '\r\n')" >> $GITHUB_OUTPUT
+          echo "ecr_repo=$(terraform output -raw ecr_repo | tr -d '\r\n')" >> "$GITHUB_OUTPUT"
+          echo "lambda_function=$(terraform output -raw lambda_function | tr -d '\r\n')" >> "$GITHUB_OUTPUT"
+          echo "model_bucket=$(terraform output -raw model_bucket | tr -d '\r\n')" >> "$GITHUB_OUTPUT"
+          echo "predictions_stream=$(terraform output -raw predictions_stream | tr -d '\r\n')" >> "$GITHUB_OUTPUT"
 
       # Build-Push
       - name: Login to Amazon ECR 
@@ -49,12 +49,18 @@ jobs:
         id: build-image-step
         working-directory: 06-best-practices/infrastructure
         env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ steps.tf-apply.outputs.ecr_repo }}
+          LAMBDA_FUNCTION: ${{ steps.tf-apply.outputs.lambda_function }}
+          MODEL_BUCKET_PROD: ${{ steps.tf-apply.outputs.model_bucket }}
+          PREDICTIONS_STREAM_NAME: ${{ steps.tf-apply.outputs.predictions_stream }}
           IMAGE_TAG: "latest"
         run: |
-            echo "ecr_repo: ${{ steps.tf-apply.outputs.ecr_repo }}"
-            echo "lambda_function: ${{ steps.tf-apply.outputs.lambda_function }}"
-            echo "model_bucket: ${{ steps.tf-apply.outputs.model_bucket }}"
-            echo "predictions_stream: ${{ steps.tf-apply.outputs.predictions_stream }}"
+            echo "ECR_REGISTRY: ${ECR_REGISTRY}"
+            echo "ECR_REPOSITORY: ${ECR_REPOSITORY}"
+            echo "LAMBDA_FUNCTION: ${LAMBDA_FUNCTION}"
+            echo "MODEL_BUCKET_PROD: ${MODEL_BUCKET_PROD}"
+            echo "PREDICTIONS_STREAM_NAME: ${PREDICTIONS_STREAM_NAME}"
         # docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         # docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         # echo "image_uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
