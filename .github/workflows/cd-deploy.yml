@@ -35,10 +35,10 @@ jobs:
         if: ${{ steps.tf-plan.outcome == 'success' }}
         run: |
           terraform apply -auto-approve -var-file=vars/prod.tfvars
-          echo "ECR_REGISTRY=$(terraform output -raw ecr_repo 2>/dev/null | tr -d '\r\n')" >> $GITHUB_ENV
-          echo "LAMBDA_FUNCTION=$(terraform output -raw lambda_function 2>/dev/null | tr -d '\r\n')" >> $GITHUB_ENV
-          echo "MODEL_BUCKET_PROD=$(terraform output -raw model_bucket 2>/dev/null | tr -d '\r\n')" >> $GITHUB_ENV
-          echo "PREDICTIONS_STREAM_NAME=$(terraform output -raw predictions_stream 2>/dev/null | tr -d '\r\n')" >> $GITHUB_ENV
+          echo "ecr_repo=$(terraform output -raw ecr_repo | tr -d '\r\n')" >> $GITHUB_OUTPUT
+          echo "lambda_function=$(terraform output -raw lambda_function | tr -d '\r\n')" >> $GITHUB_OUTPUT
+          echo "model_bucket=$(terraform output -raw model_bucket | tr -d '\r\n')" >> $GITHUB_OUTPUT
+          echo "predictions_stream=$(terraform output -raw predictions_stream | tr -d '\r\n')" >> $GITHUB_OUTPUT
 
       # Build-Push
       - name: Login to Amazon ECR 
@@ -51,13 +51,14 @@ jobs:
         env:
           IMAGE_TAG: "latest"
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image_uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-      # echo "ecr_repo: ${{ steps.tf-apply.outputs.ecr_repo }}"
-      # echo "lambda_function: ${{ steps.tf-apply.outputs.lambda_function }}"
-      # echo "model_bucket: ${{ steps.tf-apply.outputs.model_bucket }}"
-      # echo "predictions_stream: ${{ steps.tf-apply.outputs.predictions_stream }}"
+            echo "ecr_repo: ${{ steps.tf-apply.outputs.ecr_repo }}"
+            echo "lambda_function: ${{ steps.tf-apply.outputs.lambda_function }}"
+            echo "model_bucket: ${{ steps.tf-apply.outputs.model_bucket }}"
+            echo "predictions_stream: ${{ steps.tf-apply.outputs.predictions_stream }}"
+        # docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        # docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        # echo "image_uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
 
       # Deploy
       - name: Get model artifacts
