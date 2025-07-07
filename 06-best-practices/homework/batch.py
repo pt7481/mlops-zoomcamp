@@ -29,6 +29,12 @@ def read_data(filename, categorical):
     df = prepare_data(df, categorical)
     return df
 
+def save_data(df_result, output_file):
+    if not S3_ENDPOINT_URL:
+        df_result.to_parquet(output_file, engine='pyarrow', index=False)
+    else:
+        df_result.to_parquet(output_file, engine='pyarrow', compression=None, index=False, storage_options=options)
+
 def get_input_path(year, month):
     default_input_pattern = 'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{year:04d}-{month:02d}.parquet'
     input_pattern = os.getenv('INPUT_FILE_PATTERN', default_input_pattern)
@@ -61,12 +67,13 @@ def main(year: int, month: int):
     y_pred = lr.predict(X_val)
 
     print('predicted mean duration:', y_pred.mean())
+    print('sum of predicted durations:', y_pred.sum())
 
     df_result = pd.DataFrame()
     df_result['ride_id'] = df['ride_id']
     df_result['predicted_duration'] = y_pred
 
-    df_result.to_parquet(output_file, engine='pyarrow', index=False)
+    save_data(df_result, output_file)
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
