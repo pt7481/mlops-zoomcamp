@@ -86,3 +86,5 @@ output "predictions_stream" {
 output "ecr_repo" {
     value = "tw-${var.ecr_repo_name}-${var.project_id}"
 }
+
+#
