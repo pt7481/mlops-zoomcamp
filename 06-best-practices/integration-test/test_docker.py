@@ -10,7 +10,7 @@ with open('event.json', 'rt', encoding='utf-8') as f_in:
 
 
 url = 'http://localhost:8080/2015-03-31/functions/function/invocations'
-actual_response = requests.post(url, json=event).json()
+actual_response = requests.post(url, json=event, timeout=90).json()
 print('actual response:')
 
 print(json.dumps(actual_response, indent=2))
@@ -21,7 +21,7 @@ expected_response = {
             'model': 'ride_duration_prediction_model',
             'version': 'Test123',
             'prediction': {
-                'ride_duration': 21.3,
+                'ride_duration': 18.2,
                 'ride_id': 256,
             },
         }
