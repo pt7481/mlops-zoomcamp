@@ -35,16 +35,10 @@ jobs:
         if: ${{ steps.tf-plan.outcome == 'success' }}
         run: |
           terraform apply -auto-approve -var-file=vars/prod.tfvars
-
-          ECR_REPO=$(terraform output -raw ecr_repo)
-          LAMBDA_FUNCTION=$(terraform output -raw lambda_function)
-          MODEL_BUCKET=$(terraform output -raw model_bucket)
-          PREDICTIONS_STREAM=$(terraform output -raw predictions_stream)
-
-          echo "::set-output name=ecr_repo::$ECR_REPO"
-          echo "::set-output name=lambda_function::$LAMBDA_FUNCTION"
-          echo "::set-output name=model_bucket::$MODEL_BUCKET"
-          echo "::set-output name=predictions_stream::$PREDICTIONS_STREAM"
+          echo "::set-output name=ecr_repo::$(terraform output ecr_repo | xargs)"
+          echo "::set-output name=predictions_stream_name::$(terraform output predictions_stream_name | xargs)"
+          echo "::set-output name=model_bucket::$(terraform output model_bucket | xargs)"
+          echo "::set-output name=lambda_function::$(terraform output lambda_function | xargs)"
 
       # Build-Push
       - name: Login to Amazon ECR 
@@ -59,10 +53,10 @@ jobs:
           ECR_REPOSITORY: ${{ steps.tf-apply.outputs.ecr_repo }}
           IMAGE_TAG: latest
         run: |
-          echo "ecr_repo: ${steps.tf-apply.outputs.ecr_repo }"
-          echo "lambda_function: ${ steps.tf-apply.outputs.lambda_function }"
-          echo "model_bucket: ${ steps.tf-apply.outputs.model_bucket }"
-          echo "predictions_stream: ${ steps.tf-apply.outputs.predictions_stream }"
+          echo "ecr_repo: ${{ steps.tf-apply.outputs.ecr_repo }}"
+          echo "lambda_function: ${{ steps.tf-apply.outputs.lambda_function }}"
+          echo "model_bucket: ${{ steps.tf-apply.outputs.model_bucket }}"
+          echo "predictions_stream: ${{ steps.tf-apply.outputs.predictions_stream }}"
 
       # docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
       # docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
