@@ -70,3 +70,19 @@ module "lambda_function" {
     source_stream_arn = module.source_kinesis_stream.stream_arn
     mlflow_experiment_id = var.mlflow_experiment_id
 }
+
+output "lambda_function" {
+    value = module.lambda_function.lambda_function_name
+}
+
+output "model_bucket" {
+    value = module.s3_bucket.name
+}
+
+output "predictions_stream" {
+    value = module.lambda_function.output_stream_name
+}
+
+output "ecr_repo" {
+    value = module.ecr_image.ecr_repo_name
+}
